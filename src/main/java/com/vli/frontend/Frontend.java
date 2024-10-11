@@ -6,15 +6,28 @@ import com.vli.backend.*;
 public class Frontend implements FrontendInterface{
     // TODO: input week and maybe season, input scoring format
 
-    private Backend backend;
+    private static Frontend instance;
+
     private Scanner scanner;
 
-    public Frontend(Backend backend, Scanner scanner) {
-        this.backend = backend;
-        this.scanner = scanner;
+    private Frontend() {
+        this.scanner = new Scanner(System.in);
+    }
+
+    public static Frontend getInstance() {
+        if (instance == null) {
+            synchronized (Frontend.class) {
+                if (instance == null) {
+                    instance = new Frontend();
+                }
+            }
+        }
+        return instance;
     }
 
     public void start() {
+        System.out.print("\033[H\033[2J");  
+        System.out.flush();
         System.out.println("\nWelcome to the Fantasy Football Projector");
         // promptWeek();
         mainMenu();
@@ -54,7 +67,7 @@ public class Frontend implements FrontendInterface{
     }
 
     public void inputPlayer(String player) {
-        float projectedPoints = this.backend.getProjectionAsString(player);
+        float projectedPoints = Backend.getInstance().getProjectionAsString(player);
         System.out.println("\nProjected points: " + String.valueOf(projectedPoints));
     }
 }

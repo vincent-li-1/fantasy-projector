@@ -1,7 +1,19 @@
 package com.vli.backend;
 
 public class Backend implements BackendInterface {
-    public Backend() {
+    private static Backend instance;
+
+    private Backend() {}
+
+    public static Backend getInstance() {
+        if (instance == null) {
+            synchronized (Backend.class) {
+                if (instance == null) {
+                    instance = new Backend();
+                }
+            }
+        }
+        return instance;
     }
     
     public float getProjectionAsString(String player) {

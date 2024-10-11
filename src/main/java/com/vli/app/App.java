@@ -6,8 +6,7 @@ import com.vli.frontend.*;
 
 public class App {
     public static void main(String[] args) {
-        Backend backend = new Backend();
-        Frontend frontend = new Frontend(backend, new Scanner(System.in));
+        Frontend frontend = Frontend.getInstance();
         frontend.start();
     }
 }
