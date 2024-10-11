@@ -8,6 +8,7 @@ public class TeamDatabase implements TeamDatabaseInterface {
     private HashMap<String, Team> database;
 
     private TeamDatabase() {
+        this.database = new HashMap<>();
     }
 
     public static TeamDatabase getInstance() {
@@ -27,5 +28,17 @@ public class TeamDatabase implements TeamDatabaseInterface {
 
     public Team getTeam(String teamCode) {
         return this.database.get(teamCode);
+    }
+
+    public void upsertTeam(String teamCode, Team team) {
+        this.database.put(teamCode, team);
+    }
+
+    public void clear() {
+        this.database.clear();
+    }
+
+    public void deleteTeam(String teamCode) {
+        this.database.remove(teamCode);
     }
 }
