@@ -18,5 +18,24 @@ public interface TeamInterface {
     // String location
     // String teamName
 
-    public float calculateTeamCoefficient(String team, String stat);
+    /**
+     * Calculate a team coefficient for a given stat
+     * @param String stat to calculate
+     * @return float coefficient value
+     */
+    public float calculateTeamCoefficient(String stat);
+
+    /**
+     * Get an opponents defensive stats
+     * @param String opponent team code
+     * @return int[][] representing [dRS[], dPS[], dRTD[], dPTD[], dTO[], dREC[]]
+     */
+    public int[][] getOpponentDefensiveStats(String opponentCode);
+
+    /**
+     * Calculate the averages of an opponents defensive stats
+     * @param int[][] matrix of opponents stats
+     * @return int[] representing averages [dRS, dPS, dRTD, dPTD, dTO, dREC];
+     */
+    public int[] averageOpponentDefensiveStats(int[][] opponentStats);
 }
