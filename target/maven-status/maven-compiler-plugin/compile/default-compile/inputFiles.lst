@@ -1,0 +1,14 @@
+/Users/vincentli/projects/fantasy-projector/src/main/java/com/vli/app/App.java
+/Users/vincentli/projects/fantasy-projector/src/main/java/com/vli/backend/Backend.java
+/Users/vincentli/projects/fantasy-projector/src/main/java/com/vli/backend/BackendInterface.java
+/Users/vincentli/projects/fantasy-projector/src/main/java/com/vli/backend/Calculator.java
+/Users/vincentli/projects/fantasy-projector/src/main/java/com/vli/backend/CalculatorInterface.java
+/Users/vincentli/projects/fantasy-projector/src/main/java/com/vli/backend/PlayerInterface.java
+/Users/vincentli/projects/fantasy-projector/src/main/java/com/vli/backend/Repository.java
+/Users/vincentli/projects/fantasy-projector/src/main/java/com/vli/backend/RepositoryInterface.java
+/Users/vincentli/projects/fantasy-projector/src/main/java/com/vli/backend/Team.java
+/Users/vincentli/projects/fantasy-projector/src/main/java/com/vli/backend/TeamDatabase.java
+/Users/vincentli/projects/fantasy-projector/src/main/java/com/vli/backend/TeamDatabaseInterface.java
+/Users/vincentli/projects/fantasy-projector/src/main/java/com/vli/backend/TeamInterface.java
+/Users/vincentli/projects/fantasy-projector/src/main/java/com/vli/frontend/Frontend.java
+/Users/vincentli/projects/fantasy-projector/src/main/java/com/vli/frontend/FrontendInterface.java

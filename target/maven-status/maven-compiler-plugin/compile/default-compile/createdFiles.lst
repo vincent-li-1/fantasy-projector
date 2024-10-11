@@ -1,0 +1,14 @@
+com/vli/backend/BackendInterface.class
+com/vli/backend/Team.class
+com/vli/backend/TeamDatabaseInterface.class
+com/vli/backend/TeamInterface.class
+com/vli/backend/Calculator.class
+com/vli/backend/CalculatorInterface.class
+com/vli/frontend/Frontend.class
+com/vli/backend/TeamDatabase.class
+com/vli/app/App.class
+com/vli/backend/Backend.class
+PlayerInterface.class
+com/vli/frontend/FrontendInterface.class
+com/vli/backend/Repository.class
+com/vli/backend/RepositoryInterface.class
