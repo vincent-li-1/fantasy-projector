@@ -2,11 +2,11 @@ package com.vli.backend;
 
 public interface TeamInterface {
     /**
-     * Calculate a team coefficient for a given stat
+     * Calculate a team coefficients for all stats
      * @param String stat to calculate
-     * @return float coefficient value
+     * @return float[] representing[RS, PS, RTD, PTD, TO, REC]
      */
-    public float calculateTeamCoefficient(String stat);
+    public float[] calculateTeamCoefficients();
 
     /**
      * Get an opponents defensive stats
@@ -21,4 +21,10 @@ public interface TeamInterface {
      * @return int[] representing averages [dRS, dPS, dRTD, dPTD, dTO, dREC];
      */
     public float[] averageOpponentDefensiveStats(int[][] opponentStats);
+
+    /**
+     * Get the expected stats against the next opponent
+     * @param String opponent team code
+     * @return float[] representing [eRS, ePS, eRTD, ePTD, eTO, eREC]
+     */
 }
