@@ -7,11 +7,12 @@ public class Player implements PlayerInterface{
     /**
      * Stats are structured as [RushYds[], PassYds[], RecYds[], RushTDs[], PassTDs[], RecTDs[], TO[], Rec[]]
      */
-    int[][] stats;
-    Team team;
-    String name;
-    String position;
-    float[] coefficientWeights;
+    protected int[][] stats;
+    public Team team;
+    public String name;
+    public String position;
+    private float[] coefficientWeights;
+    public float projection = 0f;
 
     public Player(int[][] stats, Team team, String name, String position) {
         this.stats = stats;

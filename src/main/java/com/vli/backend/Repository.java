@@ -9,8 +9,93 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Repository implements RepositoryInterface {
-    public void loadTeamDataIntoDatabase(int week, int season) 
-        throws MalformedURLException, IOException {
+    public Player getPlayerFromName(String name, int week, int season) throws MalformedURLException, IOException {
+        int playerId = getPlayerId(name);
+        URL url = new URL("https://api.sportsdata.io/v3/nfl/stats/json/PlayerGameStatsBySeason/" + Integer.toString(season) + "/" + Integer.toString(playerId) + "/" + Integer.toString(week - 1) + "?key=daa9686491a84209b4f7850b9cd67b6e");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+        conn.setRequestMethod("GET");
+        conn.connect();
+
+        int responseCode = conn.getResponseCode();
+
+        if (responseCode != 200) {
+            throw new RuntimeException("HTTPResponseCode: " + responseCode);
+        }
+
+        String jsonString = "";
+        Scanner scanner = new Scanner(url.openStream());
+
+        while (scanner.hasNext()) {
+            jsonString += scanner.nextLine();
+        }
+
+        scanner.close();
+
+        JSONArray jsonArr = new JSONArray(jsonString);
+
+        int[][] stats = createStatsFromJSONArray(jsonArr);
+
+        Team team = TeamDatabase.getInstance().getTeam(jsonArr.getJSONObject(0).getString("Team"));
+        
+        String DBName = jsonArr.getJSONObject(0).getString("Name");
+
+        String position = jsonArr.getJSONObject(0).getString("Position");
+
+        return new Player(stats, team, DBName, position);
+    }
+
+    private int getPlayerId(String name) throws MalformedURLException, IOException {
+        int playerId = 0;
+        URL url = new URL("https://api.sportsdata.io/v3/nfl/scores/json/PlayersByAvailable?key=daa9686491a84209b4f7850b9cd67b6e");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+        conn.setRequestMethod("GET");
+        conn.connect();
+
+        int responseCode = conn.getResponseCode();
+
+        if (responseCode != 200) {
+            throw new RuntimeException("HTTPResponseCode: " + responseCode);
+        }
+
+        String jsonString = "";
+        Scanner scanner = new Scanner(url.openStream());
+
+        while (scanner.hasNext()) {
+            jsonString += scanner.nextLine();
+        }
+
+        scanner.close();
+
+        JSONArray jsonArr = new JSONArray(jsonString);
+
+        for (int i = 0; i < jsonArr.length(); i++) {
+            if (jsonArr.getJSONObject(i).getString("Name").toLowerCase().equals(name.toLowerCase())) {
+                playerId = jsonArr.getJSONObject(i).getInt("PlayerID");
+                break;
+            }
+        }
+        return playerId;
+    }
+
+    private int[][] createStatsFromJSONArray(JSONArray jsonArr) {
+        int[][] stats = new int[8][jsonArr.length()];
+        for (int i = 0; i < jsonArr.length(); i++) {
+            stats[0][i] = jsonArr.getJSONObject(i).getInt("RushingYards");
+            stats[1][i] = jsonArr.getJSONObject(i).getInt("PassingYards");
+            stats[2][i] = jsonArr.getJSONObject(i).getInt("ReceivingYards");
+            stats[3][i] = jsonArr.getJSONObject(i).getInt("RushingTouchdowns");
+            stats[4][i] = jsonArr.getJSONObject(i).getInt("PassingTouchdowns");
+            stats[5][i] = jsonArr.getJSONObject(i).getInt("ReceivingTouchdowns");
+            stats[6][i] = jsonArr.getJSONObject(i).getInt("FumblesLost") + jsonArr.getJSONObject(i).getInt("Interceptions");
+            stats[7][i] = jsonArr.getJSONObject(i).getInt("Receptions");
+        }
+        return stats;
+    }
+
+    public void loadTeamDataIntoDatabase(int week, int season) throws MalformedURLException, IOException {
+        TeamDatabase.getInstance().clear();
         for (int i = 0; i < week; i++) {
             URL url = new URL("https://api.sportsdata.io/v3/nfl/stats/json/TeamGameStatsFinal/" + Integer.toString(season) + "/" + Integer.toString(i) + "?key=daa9686491a84209b4f7850b9cd67b6e");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -82,9 +167,6 @@ public class Repository implements RepositoryInterface {
     private void addNextOpponent(String teamCode, String opp) {
         TeamDatabase database = TeamDatabase.getInstance();
         Team team = database.getTeam(teamCode);
-        if (team == null) {
-            System.out.println(teamCode);
-        }
         team.nextOpp = opp;
         database.upsertTeam(teamCode, team);
     };

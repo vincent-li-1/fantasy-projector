@@ -10,13 +10,13 @@ public class Team implements TeamInterface {
      * is the weekly stat:
      * [rushYds[], passYds[], rushTDs[], passTDs[], turnovers[], completions[]]
      */
-    int[][] offensiveStats;
-    int[][] defensiveStats;
-    String[] schedule;
-    String code;
-    String teamName;
-    String nextOpp;
-    float[] coefficientWeights;
+    protected int[][] offensiveStats;
+    protected int[][] defensiveStats;
+    protected String[] schedule;
+    public String code;
+    public String teamName;
+    public String nextOpp;
+    private float[] coefficientWeights;
 
     public Team(
     int[][] offensiveStats,

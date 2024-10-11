@@ -3,6 +3,7 @@ package com.vli.frontend;
 import java.util.Scanner;
 import com.vli.backend.*;
 import java.time.Year;
+import java.text.DecimalFormat;
 
 public class Frontend implements FrontendInterface{
     private static Frontend instance;
@@ -46,6 +47,7 @@ public class Frontend implements FrontendInterface{
             try {
                 inputInts[0] = Integer.parseInt(inputs[0]);
                 inputInts[1] = Integer.parseInt(inputs[1]);
+                // TODO: Use sports data API to get the exact year/week entries
                 if (inputInts[0] < 2000 || inputInts[0] > Year.now().getValue()) {
                     System.out.println("\nCan only use seasons between 2000 and " + Year.now().getValue() + ", please try again:\n");
                 }
@@ -55,7 +57,9 @@ public class Frontend implements FrontendInterface{
                 else {
                     System.out.println("\nLoading data...");
                     Backend backend = Backend.getInstance();
-                    backend.loadTeamData(inputInts[1], inputInts[0]);
+                    backend.week = inputInts[1];
+                    backend.season = inputInts[0];
+                    backend.loadTeamData();
                     break;
                 }
             } catch (Exception e) {
@@ -65,34 +69,39 @@ public class Frontend implements FrontendInterface{
     }
 
     public void mainMenu() {
-        System.out.println("\nPlease enter the name of a player or type \"change\" to change the season or week, \"scoring\" to change the scoring, or \"exit\" to exit:\n");
+        String currentScoring;
+        if (Backend.getInstance().scoring == 0f) {
+            currentScoring = "Standard";
+        }
+        else if (Backend.getInstance().scoring == 0.5f) {
+            currentScoring = "Half-PPR";
+        }
+        else if (Backend.getInstance().scoring == 1f) {
+            currentScoring = "PPR";
+        }
+        else {
+            currentScoring = "None";
+        }
         String userInput;
+        System.out.println("\nScoring is " + currentScoring + ". Season and week is " + Integer.toString(Backend.getInstance().season) + "-" + Integer.toString(Backend.getInstance().week) + ". Please enter the name of a player or type \"change\" to change the season or week, \"scoring\" to change the scoring, or \"exit\" to exit:\n");
         while (scanner.hasNextLine()) {
             userInput = scanner.nextLine().trim().toLowerCase();
             if (userInput.equals("exit")) {
                 break;
             }
-            if (userInput.equals("change")) {
+            else if (userInput.equals("change")) {
                 loadData();
+                System.out.println("\nScoring is " + currentScoring + ". Please enter the name of another player or type \"change\" to change the season or week, \"scoring\" to change the scoring, or \"exit\" to exit:\n");
             }
-            if (userInput.equals("scoring")) {
+            else if (userInput.equals("scoring")) {
                 setScoring();
-            }
-            inputPlayer(userInput);
-            String currentScoring;
-            if (Backend.getInstance().scoring == 0f) {
-                currentScoring = "Standard";
-            }
-            else if (Backend.getInstance().scoring == 0.5f) {
-                currentScoring = "Half-PPR";
-            }
-            else if (Backend.getInstance().scoring == 1f) {
-                currentScoring = "PPR";
+                System.out.println("\nScoring is " + currentScoring + ". Please enter the name of another player or type \"change\" to change the season or week, \"scoring\" to change the scoring, or \"exit\" to exit:\n");
             }
             else {
-                currentScoring = "None";
-            }
-            System.out.println("\nScoring is " + currentScoring + ". Please enter the name of another player or type \"change\" to change the season or week, or \"exit\" to exit:\n");
+                System.out.println("\nCalculating...");
+                inputPlayer(userInput);
+                System.out.println("\nScoring is " + currentScoring + ". Please enter the name of another player or type \"change\" to change the season or week, \"scoring\" to change the scoring, or \"exit\" to exit:\n");
+            } 
         }
         exitApp();
     }
@@ -102,9 +111,15 @@ public class Frontend implements FrontendInterface{
         scanner.close();
     }
 
-    public void inputPlayer(String player) {
-        float projectedPoints = Backend.getInstance().getProjectionAsString(player);
-        System.out.println("\nProjected points: " + String.valueOf(projectedPoints));
+    public void inputPlayer(String playerName) {
+        Player player = Backend.getInstance().getPlayer(playerName);
+        DecimalFormat df = new DecimalFormat("0.00");
+        if (player == null) {
+            System.out.println("\nPlayer not found");
+        }
+        else {
+            System.out.println("\nPlayer: " + player.name + "\nPosition: " + player.position + "\nTeam: " + player.team.code + "\nOpponent: " + player.team.nextOpp + "\nProjected points: " + df.format(player.projection));
+        }
     }
 
     public void setScoring() {
@@ -140,7 +155,7 @@ public class Frontend implements FrontendInterface{
                     entered = true;
                     break;
                 default:
-                    System.out.println("Error: Invalid input");
+                    System.out.println("Error: Invalid input, please try again:");
             }
             if (entered) {
                 break;
