@@ -29,6 +29,8 @@ public class Frontend implements FrontendInterface{
         System.out.print("\033[H\033[2J");  
         System.out.flush();
         System.out.println("\nWelcome to the Fantasy Football Projector");
+        Backend backend = Backend.getInstance();
+        backend.loadTeamData(2);
         // promptWeek();
         mainMenu();
     }

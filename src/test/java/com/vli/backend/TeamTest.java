@@ -6,6 +6,7 @@ import org.junit.jupiter.api.*;
 
 import org.junit.jupiter.api.Test;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TeamTest {
 
     private static Team saints;
@@ -34,11 +35,10 @@ public class TeamTest {
         int[][] defensiveStats1 = new int[][]{dRYds1, dPYds1, dRTD1, dPTD1, dTO1, dREC1};
         String[] schedule1 = new String[]{"DEN", "TB", "SF"};
         String code1 = "NO";
-        String location1 = "New Orleans";
         String teamName1 = "Saints";
         String nextOpp = "MIN";
         saints = new Team(
-            offensiveStats, defensiveStats1, schedule1, code1, location1, teamName1, nextOpp
+            offensiveStats, defensiveStats1, schedule1, code1, teamName1, nextOpp
         );
 
         int[] dRYds2 = new int[]{100, 90, 100};
@@ -51,11 +51,10 @@ public class TeamTest {
         int[][] defensiveStats2 = new int[][]{dRYds2, dPYds2, dRTD2, dPTD2, dTO2, dREC2};
         String[] schedule2 = new String[]{"NO", "BAL", "LV"};
         String code2 = "DEN";
-        String location2 = "Denver";
         String teamName2 = "Broncos";
         String nextOpp2 = "DAL";
         broncos = new Team(
-            offensiveStats, defensiveStats2, schedule2, code2, location2, teamName2, nextOpp2
+            offensiveStats, defensiveStats2, schedule2, code2, teamName2, nextOpp2
         );
 
         int[] dRYds3 = new int[]{50, 200, 140};
@@ -68,11 +67,10 @@ public class TeamTest {
         int[][] defensiveStats3 = new int[][]{dRYds3, dPYds3, dRTD3, dPTD3, dTO3, dREC3};
         String[] schedule3 = new String[]{"ATL", "NO", "CIN"};
         String code3 = "TB";
-        String location3 = "Tampa Bay";
         String teamName3 = "Buccaneers";
         String nextOpp3 = "ARI";
         bucs = new Team(
-            offensiveStats, defensiveStats3, schedule3, code3, location3, teamName3, nextOpp3
+            offensiveStats, defensiveStats3, schedule3, code3, teamName3, nextOpp3
         );
         
         int[] dRYds4 = new int[]{122, 100};
@@ -85,11 +83,10 @@ public class TeamTest {
         int[][] defensiveStats4 = new int[][]{dRYds4, dPYds4, dRTD4, dPTD4, dTO4, dREC4};
         String[] schedule4 = new String[]{"LAR", "NO"};
         String code4 = "SF";
-        String location4 = "San Francisco";
         String teamName4 = "49ers";
         String nextOpp4 = "NYG";
         niners = new Team(
-            offensiveStats, defensiveStats4, schedule4, code4, location4, teamName4, nextOpp4
+            offensiveStats, defensiveStats4, schedule4, code4, teamName4, nextOpp4
         );
         
         int[] dRYds5 = new int[]{101, 102};
@@ -102,14 +99,14 @@ public class TeamTest {
         int[][] defensiveStats5 = new int[][]{dRYds5, dPYds5, dRTD5, dPTD5, dTO5, dREC5};
         String[] schedule5 = new String[]{"GB", "CHI"};
         String code5 = "MIN";
-        String location5 = "Minnesota";
         String teamName5 = "Vikings";
         String nextOpp5 = "NO";
         vikings = new Team(
-            offensiveStats, defensiveStats5, schedule5, code5, location5, teamName5, nextOpp5
+            offensiveStats, defensiveStats5, schedule5, code5, teamName5, nextOpp5
         );
 
         database = TeamDatabase.getInstance();
+        database.clear();
         database.upsertTeam("NO", saints);
         database.upsertTeam("DEN", broncos);
         database.upsertTeam("TB", bucs);
@@ -117,12 +114,14 @@ public class TeamTest {
         database.upsertTeam("MIN", vikings);
     }
 
+    @Order(1)
     @Test
     public void testGetDefensiveStat() {
         assertSame(saints.getOpponentDefensiveStats("DEN"), broncos.defensiveStats);
         assertSame(saints.getOpponentDefensiveStats("TB"), bucs.defensiveStats);
     }
     
+    @Order(2)
     @Test
     public void testAverageOpponentDefensiveStats() {
         float[] expectedDefStats = new float[]{96.67f, 245.33f, 1.33f, 2.33f, 0f, 25.67f};
@@ -138,6 +137,7 @@ public class TeamTest {
         }
     }
 
+    @Order(3)
     @Test
     public void testCalculateTeamCoefficients() {
         float[] expectedTeamCoefficients = new float[]{1.16f, 1.20f, 0.72f, 1.43f, 0.51f, 1.28f};
@@ -145,10 +145,55 @@ public class TeamTest {
         assertArrayEquals(expectedTeamCoefficients, actualTeamCoefficients, 0.1f);
     }
 
+    @Order(4)
     @Test
     public void testExpectedStatsAgainstOpp() {
         float[] expectedStats = new float[]{116.9f, 588.28f, 0.37f, 5.04f, 0.52f, 39.57f};
         float[] actualStats = saints.expectedStatsAgainstNextOpp();
         assertArrayEquals(expectedStats, actualStats, 0.1f);
+    }
+
+    @Order(5)
+    @Test
+    public void testAddWeek() {
+        int[] offensiveStatsToAdd = new int[]{100, 200, 1, 2, 0, 30};
+        int[] defensiveStatsToAdd = offensiveStatsToAdd;
+        String opp = "NYJ";
+        saints.addWeek(offensiveStatsToAdd, defensiveStatsToAdd, opp);
+        assertEquals(4, saints.offensiveStats[0].length);
+        assertEquals(4, saints.defensiveStats[0].length);
+        assertEquals(4, saints.schedule.length);
+        int idx = saints.offensiveStats[0].length - 1;
+        int[] offStats = new int[saints.offensiveStats.length];
+        int[] defStats = new int[saints.defensiveStats.length];
+        for (int i = 0; i < saints.offensiveStats.length; i++) {
+            offStats[i] = saints.offensiveStats[i][idx];
+            defStats[i] = saints.defensiveStats[i][idx];
+        }
+        assertArrayEquals(offensiveStatsToAdd, offStats);
+        assertArrayEquals(defensiveStatsToAdd, defStats);
+        assertEquals("NYJ", saints.schedule[saints.schedule.length - 1]);
+    }
+
+    @Order(6)
+    public void testAddWeekToEmptyTeam() {
+        Team team = new Team(new int[6][0], new int[6][0], new String[0], "BUF", "Bills", "NE");
+        int[] newOffStats = new int[]{1, 2, 3, 4, 5, 6};
+        int[] newDefStats = new int[]{6, 5, 4, 3, 2, 1};
+        String opp = "NE";
+        team.addWeek(newOffStats, newDefStats, opp);
+        assertEquals(1, team.schedule.length);
+        assertEquals(1, team.offensiveStats[0].length);
+        assertEquals(1, team.defensiveStats[0].length);
+        int idx = team.offensiveStats[0].length - 1;
+        int[] offStats = new int[team.offensiveStats.length];
+        int[] defStats = new int[team.defensiveStats.length];
+        for (int i = 0; i < team.offensiveStats.length; i++) {
+            offStats[i] = team.offensiveStats[i][idx];
+            defStats[i] = team.defensiveStats[i][idx];
+        }
+        assertArrayEquals(newOffStats, offStats);
+        assertArrayEquals(newDefStats, defStats);
+        assertArrayEquals(new String[]{"NE"}, team.schedule);
     }
 }

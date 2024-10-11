@@ -21,6 +21,13 @@ public class Backend implements BackendInterface {
     }
 
     public void loadTeamData(int week) {
+        Repository repo = new Repository();
+        try {
+            repo.loadTeamDataIntoDatabase(week);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        TeamDatabase database = TeamDatabase.getInstance();
         return;
     }
 

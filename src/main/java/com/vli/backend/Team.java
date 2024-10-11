@@ -1,6 +1,7 @@
 package com.vli.backend;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class Team implements TeamInterface {
 
@@ -13,7 +14,6 @@ public class Team implements TeamInterface {
     int[][] defensiveStats;
     String[] schedule;
     String code;
-    String location;
     String teamName;
     String nextOpp;
     float[] coefficientWeights;
@@ -23,7 +23,6 @@ public class Team implements TeamInterface {
     int[][] defensiveStats,
     String[] schedule,
     String code,
-    String location,
     String teamName,
     String nextOpp
     ) {
@@ -31,10 +30,32 @@ public class Team implements TeamInterface {
         this.defensiveStats = defensiveStats;
         this.schedule = schedule;
         this.code = code;
-        this.location = location;
+
         this.teamName = teamName;
         this.coefficientWeights = new float[]{1f, 0.8f, 0.5f};
         this.nextOpp = nextOpp;
+    }
+
+    public void addWeek(int[] offensiveStatsToAdd, int[] defensiveStatsToAdd, String opp) {
+        String[] updatedSchedule = new String[schedule.length + 1];
+        for (int i = 0; i < schedule.length; i++) {
+            updatedSchedule[i] = schedule[i];
+        }
+        updatedSchedule[schedule.length] = opp;
+        schedule = updatedSchedule;
+        for (int i = 0; i < offensiveStats.length; i++) {
+            offensiveStats[i] = addIntToArray(offensiveStats[i], offensiveStatsToAdd[i]);
+            defensiveStats[i] = addIntToArray(defensiveStats[i], defensiveStatsToAdd[i]);
+        }
+    }
+
+    private int[] addIntToArray(int[] array, int value) {
+        int[] updatedArray = new int[array.length + 1];
+        for (int i = 0; i < array.length; i++) {
+            updatedArray[i] = array[i];
+        }
+        updatedArray[array.length] = value;
+        return updatedArray;
     }
 
     public float[] calculateTeamCoefficients() {
