@@ -9,10 +9,10 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Repository implements RepositoryInterface {
-    public void loadTeamDataIntoDatabase(int week) 
+    public void loadTeamDataIntoDatabase(int week, int season) 
         throws MalformedURLException, IOException {
         for (int i = 0; i < week; i++) {
-            URL url = new URL("https://api.sportsdata.io/v3/nfl/stats/json/TeamGameStatsFinal/2024/" + Integer.toString(i) + "?key=daa9686491a84209b4f7850b9cd67b6e");
+            URL url = new URL("https://api.sportsdata.io/v3/nfl/stats/json/TeamGameStatsFinal/" + Integer.toString(season) + "/" + Integer.toString(i) + "?key=daa9686491a84209b4f7850b9cd67b6e");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.connect();
@@ -38,7 +38,7 @@ public class Repository implements RepositoryInterface {
                 processGame(jsonArr.getJSONObject(j));
             }
         }
-        URL url = new URL("https://api.sportsdata.io/v3/nfl/scores/json/SchedulesBasic/2024?key=daa9686491a84209b4f7850b9cd67b6e");
+        URL url = new URL("https://api.sportsdata.io/v3/nfl/scores/json/SchedulesBasic/" + Integer.toString(season) + "?key=daa9686491a84209b4f7850b9cd67b6e");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.connect();
@@ -73,13 +73,20 @@ public class Repository implements RepositoryInterface {
     private void processSchedule(JSONObject game) {
         String homeTeam = game.getString("HomeTeam");
         String awayTeam = game.getString("AwayTeam");
-        addNextOpponent(homeTeam, awayTeam);
-        addNextOpponent(awayTeam, homeTeam);
+        if (!homeTeam.equals("BYE")) {
+            addNextOpponent(homeTeam, awayTeam);
+            if (!awayTeam.equals("BYE")) {
+                addNextOpponent(awayTeam, homeTeam);
+            }
+        }
     }
 
     private void addNextOpponent(String teamCode, String opp) {
         TeamDatabase database = TeamDatabase.getInstance();
         Team team = database.getTeam(teamCode);
+        if (team == null) {
+            System.out.println(teamCode);
+        }
         team.nextOpp = opp;
         database.upsertTeam(teamCode, team);
     };

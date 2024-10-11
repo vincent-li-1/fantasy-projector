@@ -6,5 +6,5 @@ import java.io.IOException;
 
 public interface RepositoryInterface {
 
-    public void loadTeamDataIntoDatabase(int week) throws MalformedURLException, IOException;
+    public void loadTeamDataIntoDatabase(int week, int season) throws MalformedURLException, IOException;
 }

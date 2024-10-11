@@ -2,6 +2,7 @@ package com.vli.backend;
 
 public class Backend implements BackendInterface {
     private static Backend instance;
+    public float scoring = 0.5f;
 
     private Backend() {}
 
@@ -20,18 +21,14 @@ public class Backend implements BackendInterface {
         return 0.0f;
     }
 
-    public void loadTeamData(int week) {
+    public void loadTeamData(int week, int season) {
         Repository repo = new Repository();
         try {
-            repo.loadTeamDataIntoDatabase(week);
+            repo.loadTeamDataIntoDatabase(week, season);
         } catch (Exception e) {
             System.out.println(e);
         }
         TeamDatabase database = TeamDatabase.getInstance();
-        return;
-    }
-
-    public void setWeek(int week) {
         return;
     }
 }
