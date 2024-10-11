@@ -33,7 +33,7 @@ public class Team implements TeamInterface {
         this.code = code;
         this.location = location;
         this.teamName = teamName;
-        this.coefficientWeights = new float[]{1f, 0.9f, 0.75f, 0.5f, 0.2f};
+        this.coefficientWeights = new float[]{1f, 0.8f, 0.5f};
         this.nextOpp = nextOpp;
     }
 
@@ -41,11 +41,13 @@ public class Team implements TeamInterface {
         float[] coefficients = new float[6];
         Arrays.fill(coefficients, 0f);
         float divisor = 0;
-        int end = Math.max(schedule.length - 5, 0);
+        int end = Math.max(schedule.length - coefficientWeights.length, 0);
         for (int i = schedule.length - 1; i >= end; i--) {
             float[] averages = averageOpponentDefensiveStats(getOpponentDefensiveStats(schedule[i]));
             for (int j = 0; j < offensiveStats.length; j++) {
-                coefficients[j] += ((float) offensiveStats[j][i]/averages[j]) * coefficientWeights[schedule.length - 1 - i];
+                if (averages[j] != 0) {
+                    coefficients[j] += ((float) offensiveStats[j][i]/averages[j]) * coefficientWeights[schedule.length - 1 - i];
+                }
             }
             divisor += coefficientWeights[schedule.length - 1 -i];
         }

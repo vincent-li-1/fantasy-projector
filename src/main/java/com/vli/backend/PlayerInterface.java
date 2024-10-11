@@ -1,26 +1,14 @@
+package com.vli.backend;
+
 public interface PlayerInterface {
-    // int[] rushingStats;
-    // int[] passingStats;
-    // int[] receivingStats;
-    // int[] rushingTDs;
-    // int[] receivingTDs;
-    // int[] passingTDs;
-    // int[] turnovers;
-    // String team;
-    // String name;
-    // String position;
 
-    public int[] getRushingStats();
+    public int[][] getTeamStatsWithReceiving();
 
-    public int[] getReceivingStats();
+    // Calculate what percentage of the teams stats a player is expected to get
+    public float[] calculateWeightedTeamStatCoefficients();
 
-    public int[] getPassingStats();
+    public float[] projectStatsAgainstNextOpp();
 
-    public int[] getRushingTDs();
+    public float projectPointsAgainstNextOpp(float pointsPerRec);
 
-    public int[] getReceivingTDs();
-
-    public int[] getPassingTDs();
-
-    public int[] getTurnovers();
 }
