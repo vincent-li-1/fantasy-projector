@@ -20,6 +20,10 @@ public class Backend implements BackendInterface {
         return 0.0f;
     }
 
+    public void loadTeamData(int week) {
+        return;
+    }
+
     public void setWeek(int week) {
         return;
     }

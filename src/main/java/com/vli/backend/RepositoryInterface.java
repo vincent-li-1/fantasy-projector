@@ -33,4 +33,6 @@ public interface RepositoryInterface {
     public int[] fetchPlayerReceptions(String player);
 
     public int[] fetchPlayerTurnovers(String player);
+
+    public void loadTeamDataIntoDatabase(int week);
 }

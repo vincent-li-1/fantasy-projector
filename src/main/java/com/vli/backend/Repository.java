@@ -7,10 +7,6 @@ public class Repository implements RepositoryInterface {
     private String url = "https://api.sportsdata.io/v3/nfl/stats/json";
     private int week;
 
-    public Repository(int week) {
-        this.week = week;
-    }
-
     public HashMap<String, String[]> fetchTeamOpponents(String team) {
         HashMap<String, String[]> map = new HashMap<>();
         return map;
@@ -70,11 +66,15 @@ public class Repository implements RepositoryInterface {
         return new int[3];
     };
 
-    public int[] fetchPlayerReceptions(String player){
+    public int[] fetchPlayerReceptions(String player) {
         return new int[3];
     };
 
-    public int[] fetchPlayerTurnovers(String player){
+    public int[] fetchPlayerTurnovers(String player) {
         return new int[3];
     };
+
+    public void loadTeamDataIntoDatabase(int week) {
+        return;
+    }
 }
