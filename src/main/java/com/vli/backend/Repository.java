@@ -60,13 +60,11 @@ public class Repository implements RepositoryInterface {
 
         JSONArray jsonArr = new JSONArray(jsonString);
 
-        for (int i = 0; i < jsonArr.length(); i++) {
-            if (jsonArr.getJSONObject(i).getInt("Week") > week) {
-                break;
-            }
-            if (jsonArr.getJSONObject(i).getInt("Week") == week) {
-                processSchedule(jsonArr.getJSONObject(i));
-            }
+        int weekIndex = binarySearchWeekInJSONArray(jsonArr, week);
+
+        while (jsonArr.getJSONObject(weekIndex).getInt("Week") == week) {
+            processSchedule(jsonArr.getJSONObject(weekIndex));
+            weekIndex++;
         }
     }
 
@@ -113,5 +111,29 @@ public class Repository implements RepositoryInterface {
         TeamDatabase database = TeamDatabase.getInstance();
         Team team = new Team(new int[6][0], new int[6][0], new String[0], teamCode, teamName, "");
         database.upsertTeam(teamCode, team);
+    }
+
+    private int binarySearchWeekInJSONArray(JSONArray arr, int week) {
+        int left = 0;
+        int right = arr.length() - 1;
+        int middle;
+        while (right >= left) {
+            middle = (right + left) / 2;
+            if (arr.getJSONObject(middle).getInt("Week") > week) {
+                right = middle - 1;
+            }
+            else if (arr.getJSONObject(middle).getInt("Week") < week) {
+                left = middle + 1;
+            }
+            else {
+                if (arr.getJSONObject(middle - 1).getInt("Week") == week) {
+                    right = middle - 1;
+                }
+                else {
+                    return middle;
+                }
+            }
+        }
+        return -1;
     }
 }

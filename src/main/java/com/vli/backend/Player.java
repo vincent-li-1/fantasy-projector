@@ -60,7 +60,7 @@ public class Player implements PlayerInterface{
     };
 
     public float projectPointsAgainstNextOpp(float pointsPerRec) {
-        if (team.nextOpp.equals("BYE")) {
+        if (team.nextOpp != null && team.nextOpp.equals("BYE")) {
             return 0;
         }
         float[] statsProj = projectStatsAgainstNextOpp();
