@@ -3,7 +3,6 @@ package com.vli.backend;
 public interface TeamInterface {
     /**
      * Calculate a team coefficients for all stats
-     * @param String stat to calculate
      * @return float[] representing[RS, PS, RTD, PTD, TO, REC]
      */
     public float[] calculateTeamCoefficients();
@@ -24,7 +23,7 @@ public interface TeamInterface {
 
     /**
      * Get the expected stats against the next opponent
-     * @param String opponent team code
      * @return float[] representing [eRS, ePS, eRTD, ePTD, eTO, eREC]
      */
+    public float[] expectedStatsAgainstNextOpp();
 }
