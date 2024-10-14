@@ -1,17 +1,28 @@
 package com.vli.backend;
 
 import java.util.HashMap;
+import java.util.Arrays;
 import org.json.*;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.net.HttpURLConnection;
 import java.io.IOException;
 import java.util.Scanner;
+import io.github.cdimascio.dotenv.Dotenv;
+
 
 public class Repository implements RepositoryInterface {
+    
+    private String key;
+
+    public Repository() {
+        Dotenv dotenv = Dotenv.load();
+        this.key = dotenv.get("API_KEY");
+    }
+
     public Player getPlayerFromName(String name, int week, int season) throws MalformedURLException, IOException {
         int playerId = getPlayerId(name);
-        URL url = new URL("https://api.sportsdata.io/v3/nfl/stats/json/PlayerGameStatsBySeason/" + Integer.toString(season) + "/" + Integer.toString(playerId) + "/" + Integer.toString(week - 1) + "?key=daa9686491a84209b4f7850b9cd67b6e");
+        URL url = new URL("https://api.sportsdata.io/v3/nfl/stats/json/PlayerGameStatsBySeason/" + Integer.toString(season) + "/" + Integer.toString(playerId) + "/" + Integer.toString(week - 1) + "?key=" + key);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
         conn.setRequestMethod("GET");
@@ -47,7 +58,7 @@ public class Repository implements RepositoryInterface {
 
     private int getPlayerId(String name) throws MalformedURLException, IOException {
         int playerId = 0;
-        URL url = new URL("https://api.sportsdata.io/v3/nfl/scores/json/PlayersByAvailable?key=daa9686491a84209b4f7850b9cd67b6e");
+        URL url = new URL("https://api.sportsdata.io/v3/nfl/scores/json/PlayersByAvailable?key=" + key);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
         conn.setRequestMethod("GET");
@@ -97,7 +108,7 @@ public class Repository implements RepositoryInterface {
     public void loadTeamDataIntoDatabase(int week, int season) throws MalformedURLException, IOException {
         TeamDatabase.getInstance().clear();
         for (int i = 0; i < week; i++) {
-            URL url = new URL("https://api.sportsdata.io/v3/nfl/stats/json/TeamGameStatsFinal/" + Integer.toString(season) + "/" + Integer.toString(i) + "?key=daa9686491a84209b4f7850b9cd67b6e");
+            URL url = new URL("https://api.sportsdata.io/v3/nfl/stats/json/TeamGameStatsFinal/" + Integer.toString(season) + "/" + Integer.toString(i) + "?key=" + key);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.connect();
@@ -123,7 +134,7 @@ public class Repository implements RepositoryInterface {
                 processGame(jsonArr.getJSONObject(j));
             }
         }
-        URL url = new URL("https://api.sportsdata.io/v3/nfl/scores/json/SchedulesBasic/" + Integer.toString(season) + "?key=daa9686491a84209b4f7850b9cd67b6e");
+        URL url = new URL("https://api.sportsdata.io/v3/nfl/scores/json/SchedulesBasic/" + Integer.toString(season) + "?key=" + key);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.connect();

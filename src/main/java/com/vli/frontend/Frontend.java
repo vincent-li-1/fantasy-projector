@@ -69,6 +69,31 @@ public class Frontend implements FrontendInterface{
     }
 
     public void mainMenu() {
+        String userInput;
+        System.out.println("\nScoring is " + getScoring() + ". Season and week is " + Integer.toString(Backend.getInstance().season) + "-" + Integer.toString(Backend.getInstance().week) + ". Please enter the name of a player or type \"change\" to change the season or week, \"scoring\" to change the scoring, or \"exit\" to exit:\n");
+        while (scanner.hasNextLine()) {
+            userInput = scanner.nextLine().trim().toLowerCase();
+            if (userInput.equals("exit")) {
+                break;
+            }
+            else if (userInput.equals("change")) {
+                loadData();
+                System.out.println("\nScoring is " + getScoring() + ". Please enter the name of another player or type \"change\" to change the season or week, \"scoring\" to change the scoring, or \"exit\" to exit:\n");
+            }
+            else if (userInput.equals("scoring")) {
+                setScoring();
+                System.out.println("\nScoring is " + getScoring() + ". Please enter the name of another player or type \"change\" to change the season or week, \"scoring\" to change the scoring, or \"exit\" to exit:\n");
+            }
+            else {
+                System.out.println("\nCalculating...");
+                inputPlayer(userInput);
+                System.out.println("\nScoring is " + getScoring() + ". Please enter the name of another player or type \"change\" to change the season or week, \"scoring\" to change the scoring, or \"exit\" to exit:\n");
+            } 
+        }
+        exitApp();
+    }
+
+    private String getScoring() {
         String currentScoring;
         if (Backend.getInstance().scoring == 0f) {
             currentScoring = "Standard";
@@ -82,28 +107,7 @@ public class Frontend implements FrontendInterface{
         else {
             currentScoring = "None";
         }
-        String userInput;
-        System.out.println("\nScoring is " + currentScoring + ". Season and week is " + Integer.toString(Backend.getInstance().season) + "-" + Integer.toString(Backend.getInstance().week) + ". Please enter the name of a player or type \"change\" to change the season or week, \"scoring\" to change the scoring, or \"exit\" to exit:\n");
-        while (scanner.hasNextLine()) {
-            userInput = scanner.nextLine().trim().toLowerCase();
-            if (userInput.equals("exit")) {
-                break;
-            }
-            else if (userInput.equals("change")) {
-                loadData();
-                System.out.println("\nScoring is " + currentScoring + ". Please enter the name of another player or type \"change\" to change the season or week, \"scoring\" to change the scoring, or \"exit\" to exit:\n");
-            }
-            else if (userInput.equals("scoring")) {
-                setScoring();
-                System.out.println("\nScoring is " + currentScoring + ". Please enter the name of another player or type \"change\" to change the season or week, \"scoring\" to change the scoring, or \"exit\" to exit:\n");
-            }
-            else {
-                System.out.println("\nCalculating...");
-                inputPlayer(userInput);
-                System.out.println("\nScoring is " + currentScoring + ". Please enter the name of another player or type \"change\" to change the season or week, \"scoring\" to change the scoring, or \"exit\" to exit:\n");
-            } 
-        }
-        exitApp();
+        return currentScoring;
     }
 
     public void exitApp() {
